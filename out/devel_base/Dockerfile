@@ -23,33 +23,25 @@ RUN  rm -f /var/lib/dpkg/available && rm -rf  /var/cache/apt/*
 # currently unstable option not available
 
 RUN apt-get update && \
-    apt-get -y  install --fix-missing gdb libxml2-dev python-pip libmariadb-client-lgpl-dev
-    # apt-get -y  install --fix-missing -t unstable gdb libxml2-dev python-pip libmariadb-client-lgpl-dev
-    # valgrind
+	apt-get -y --no-install-recommends install --fix-missing \
+	gdb \
+	libxml2-dev \
+	python-pip \
+	libmariadb-client-lgpl-dev && \
+	rm -rf /var/lib/apt/lists/*
 
 
-
-
-RUN pip install awscli
-
-
+# RUN pip install awscli
 
 # currently unstable not available option
 #    apt-get -y install --fix-missing --fix-broken -t unstable \
 
-RUN apt-get update && \
-    apt-get -y install --fix-missing --fix-broken \
-    texlive \
-    texinfo \
-    texlive-fonts-extra \
-    texlive-latex-extra
-
-
-#
-
-
-
-
+#RUN apt-get update && \
+#    apt-get -y install --fix-missing --fix-broken \
+#    texlive \
+#    texinfo \
+#    texlive-fonts-extra \
+#    texlive-latex-extra
 
 # There should only be one version of R on this container
 #RUN dpkg --purge --force-depends r-base-core
@@ -66,20 +58,15 @@ RUN apt-get remove -y r-base-core
 # devel was having trouble installing R Matrix package because of gfortran
 # unstable currently unavailable
 # RUN apt-get update && apt-get -y install -t unstable gfortran gfortran-6
-RUN apt-get update && apt-get -y install gfortran gfortran-6
-
-# trouble install XVector because of zlib.h
-RUN apt-get update && apt-get -y install libz-dev
-
-
-
-# requested install 
-RUN apt-get update && apt-get -y install libpng-dev
-
-# install headers needed for Rhtslib
-RUN apt-get update && apt-get -y install libbz2-dev liblzma-dev
-
-
+RUN apt-get update && \
+	apt-get -y --no-install-recommends install \
+	gfortran \
+	gfortran-6 \
+	libz-dev \
+	libpng-dev \
+	libbz2-dev \
+	liblzma-dev \
+	&& rm -rf /var/lib/apt/lists/*
 
 ADD install.R /tmp/
 
@@ -96,4 +83,3 @@ USER root
 RUN echo "R_LIBS=/usr/local/lib/R/host-site-library:\${R_LIBS}" > /usr/local/lib/R/etc/Renviron.site
 RUN echo "R_LIBS_USER=''" >> /usr/local/lib/R/etc/Renviron.site
 RUN echo "options(defaultPackages=c(getOption('defaultPackages'),'BiocManager'))" >> /usr/local/lib/R/etc/Rprofile.site
-
