@@ -27,9 +27,7 @@ RUN apt-get update && \
 	gdb \
 	libxml2-dev \
 	python-pip \
-	libmariadb-client-lgpl-dev && \
-	rm -rf /var/lib/apt/lists/*
-
+	libmariadb-client-lgpl-dev
 
 # RUN pip install awscli
 
